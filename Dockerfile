@@ -1,18 +1,33 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM dunglas/frankenphp:latest-php8.3
 
-COPY . .
+# Install system dependencies and PHP extensions needed for Laravel
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo pdo_mysql
 
-# Image Configuration
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Laravel Configuration
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Set working directory
+WORKDIR /app
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Copy project files
+COPY . /app
+
+# Install Laravel dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Set permissions for Laravel storage and cache
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+
+# Expose the dynamic port Render uses
+EXPOSE 80
+
+# Run FrankenPHP and route traffic directly to Laravel's public folder
+CMD ["frankenphp", "php-server", "-r", "public/"]
