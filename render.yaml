@@ -1,0 +1,76 @@
+services:
+  - type: web
+    name: zodiac-backend
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    rootDir: .
+    healthCheckPath: /
+    envVars:
+      - key: APP_NAME
+        value: "Zodiac Store"
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: "https://zodiac-backend.onrender.com"
+      - key: APP_LOCALE
+        value: en
+      - key: APP_FALLBACK_LOCALE
+        value: en
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: zodiac-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: zodiac-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: zodiac-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: zodiac-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: zodiac-db
+          property: password
+      - key: SESSION_DRIVER
+        value: database
+      - key: SESSION_LIFETIME
+        value: "120"
+      - key: BROADCAST_CONNECTION
+        value: log
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: MAIL_MAILER
+        value: log
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: zodiac-db
+    plan: free
+    region: singapore
+    postgresMajorVersion: "16"
