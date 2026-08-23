@@ -6,12 +6,14 @@ services:
     buildCommand: composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan view:cache
     startCommand: vendor/bin/heroku-php-nginx -C nginx_app.conf public/
     envVars:
+      - key: APP_NAME
+        value: "Zodiac Store"
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
         value: "false"
       - key: APP_KEY
-        sync: false
+        value: base64:v2wnxLgvosuCcpLQIRtCxaeJxHpBQNmhFpyCLQxDdFY=
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
@@ -25,4 +27,18 @@ services:
       - key: DB_PASSWORD
         sync: false
       - key: FRONTEND_URL
+        sync: false
+      - key: SANCTUM_STATEFUL_DOMAINS
+        sync: false
+      - key: BAKONG_ACCOUNT_ID
+        value: "sopheareaksa_pheak@bkrt"
+      - key: BAKONG_ACCOUNT_TYPE
+        value: "individual"
+      - key: BAKONG_MERCHANT_NAME
+        value: "Sopheareaksa Pheak"
+      - key: BAKONG_MERCHANT_CITY
+        value: "Phnom Penh"
+      - key: BAKONG_API_URL
+        value: "https://api-bakong.nbc.gov.kh"
+      - key: BAKONG_API_TOKEN
         sync: false
