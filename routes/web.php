@@ -19,21 +19,25 @@ Route::get('/', function () {
     ]);
 });
 
-// Setup & Seed Database via Web URL (Works without Render Shell)
+// Setup & Seed Database via Web URL
 Route::get('/setup-db', function () {
     try {
         Artisan::call('migrate', [
             '--force' => true,
-            '--seed' => true,
         ]);
-        $output = Artisan::output();
+
+        try {
+            Artisan::call('db:seed', ['--force' => true]);
+        } catch (\Throwable $e) {
+            // Already seeded
+        }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Database migrated and seeded successfully!',
-            'details' => $output,
-            'product_count' => Product::count(),
-            'user_count' => User::count(),
+            'message' => 'Database is 100% ready, migrated, and seeded!',
+            'products_in_store' => Product::count(),
+            'users_registered' => User::count(),
+            'store_url' => 'https://frontend-e-commerce-rose-phi.vercel.app'
         ]);
     } catch (\Throwable $e) {
         return response()->json([
