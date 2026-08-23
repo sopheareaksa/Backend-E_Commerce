@@ -48,18 +48,19 @@ class ProductsTableSeeder extends Seeder
         ];
 
         foreach ($products as $p) {
-            Product::create([
-                'product_name' => $p[0],
-                'product_category' => $p[1],
-                'product_price' => $p[2],
-                'product_discount' => $p[3],
-                'product_special_offer' => $p[4],
-                'product_image' => $p[5],
-                'product_image2' => $p[6],
-                'product_image3' => $p[7],
-                'product_image4' => $p[8],
-                'created_at' => now(),
-            ]);
+            Product::updateOrCreate(
+                ['product_name' => $p[0]],
+                [
+                    'product_category' => $p[1],
+                    'product_price' => $p[2],
+                    'product_discount' => $p[3],
+                    'product_special_offer' => $p[4],
+                    'product_image' => $p[5],
+                    'product_image2' => $p[6],
+                    'product_image3' => $p[7],
+                    'product_image4' => $p[8],
+                ]
+            );
         }
     }
 }
