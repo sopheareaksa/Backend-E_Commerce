@@ -22,6 +22,7 @@ class Order extends Model
         'user_city',
         'user_address',
         'order_date',
+        'payway_transaction_id',
     ];
 
     protected $casts = [

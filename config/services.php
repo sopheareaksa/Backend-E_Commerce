@@ -28,6 +28,27 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'payway' => [
+        'merchant_id' => env('ABA_PAYWAY_MERCHANT_ID'),
+        'api_key' => env('ABA_PAYWAY_API_KEY'),
+        'purchase_url' => env('ABA_PAYWAY_PURCHASE_URL', 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/purchase'),
+        'check_url' => env('ABA_PAYWAY_CHECK_URL', 'https://checkout-sandbox.payway.com.kh/api/payment-gateway/v1/payments/check-transaction-2'),
+        'return_url' => env('ABA_PAYWAY_RETURN_URL'),
+        'frontend_url' => env('FRONTEND_URL', 'http://localhost:5173'),
+        'currency' => env('ABA_PAYWAY_CURRENCY', 'USD'),
+    ],
+
+    'bakong' => [
+        'account_id' => env('BAKONG_ACCOUNT_ID', 'sopheareaksa_pheak@bkrt'),
+        'merchant_id' => env('BAKONG_MERCHANT_ID', env('BAKONG_ACCOUNT_ID', 'sopheareaksa_pheak@bkrt')),
+        'acquiring_bank' => env('BAKONG_ACQUIRING_BANK', 'Bakong'),
+        'account_type' => env('BAKONG_ACCOUNT_TYPE', 'merchant'),
+        'merchant_name' => env('BAKONG_MERCHANT_NAME', 'test'),
+        'merchant_city' => env('BAKONG_MERCHANT_CITY', 'Phnom Penh'),
+        'api_url' => env('BAKONG_API_URL', 'https://api-bakong.nbc.gov.kh'),
+        'api_token' => env('BAKONG_API_TOKEN', ''),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
