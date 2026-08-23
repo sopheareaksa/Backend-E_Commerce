@@ -9,23 +9,23 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Product::all();
+        return Product::orderBy('product_id', 'desc')->get();
     }
 
     public function featured()
     {
-        return Product::where('product_category', 'featured')->get();
+        return Product::where('product_category', 'featured')->orderBy('product_id', 'desc')->get();
     }
 
     public function byCategory($slug)
     {
-        return Product::where('product_category', $slug)->get();
+        return Product::where('product_category', $slug)->orderBy('product_id', 'desc')->get();
     }
 
     public function search(Request $request)
     {
         $q = $request->input('q');
-        return Product::where('product_name', 'like', "%{$q}%")->get();
+        return Product::where('product_name', 'like', "%{$q}%")->orderBy('product_id', 'desc')->get();
     }
 
     public function show($id)
