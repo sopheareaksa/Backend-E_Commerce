@@ -9,6 +9,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -22,6 +23,29 @@ Route::get('/products/featured', [ProductController::class, 'featured']);
 Route::get('/products/category/{slug}', [ProductController::class, 'byCategory']);
 Route::get('/products/search', [ProductController::class, 'search']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
+
+// Utility route to clean duplicate products
+Route::get('/clean-duplicates', function () {
+    $products = Product::orderBy('product_id', 'desc')->get();
+    $seen = [];
+    $deleted = 0;
+
+    foreach ($products as $p) {
+        $key = strtolower(trim($p->product_name));
+        if (isset($seen[$key])) {
+            $p->delete();
+            $deleted++;
+        } else {
+            $seen[$key] = true;
+        }
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => "Cleaned {$deleted} duplicate products. Remaining: " . Product::count(),
+        'products_in_store' => Product::count(),
+    ]);
+});
 
 // Bakong KHQR endpoints (compatible with ASP.NET PaymentController routes & direct API calls)
 Route::post('/bakong/generate-khqr', [BakongPaymentController::class, 'generateKhqr']);
