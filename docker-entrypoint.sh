@@ -5,7 +5,11 @@ set -e
 PORT="${PORT:-80}"
 sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# Cache configs if APP_KEY is set
+# Clear old cached config and re-cache with live environment variables
+php artisan config:clear || true
+php artisan route:clear || true
+php artisan view:clear || true
+
 if [ -n "$APP_KEY" ]; then
     php artisan config:cache || true
     php artisan route:cache || true
