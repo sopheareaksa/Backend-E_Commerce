@@ -12,4 +12,10 @@ if [ -n "$APP_KEY" ]; then
     php artisan view:cache || true
 fi
 
+# Automatically run migrations & seed products on startup if cloud DB is provided
+if [ -n "$DB_HOST" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then
+    echo "Running migrations and seeding default products..."
+    php artisan migrate --seed --force || true
+fi
+
 exec "$@"
