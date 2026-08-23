@@ -9,11 +9,16 @@
 [![Bakong KHQR](https://img.shields.io/badge/Bakong-KHQR_API-ED1C24?style=for-the-badge)](https://bakong.nbc.gov.kh/)
 [![ABA PayWay](https://img.shields.io/badge/ABA-PayWay_Gateway-005696?style=for-the-badge)](https://www.ababank.com/)
 
+[![Live API](https://img.shields.io/badge/⚡_Live_API-Render_Backend-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://zodiac-backend-6vfn.onrender.com)
+
+<br/><br/>
+
 <p align="center">
   A RESTful e-commerce API backend built with Laravel, featuring Sanctum token authentication, dual payment processing with <b>Bakong KHQR</b> & <b>ABA PayWay</b>, Gmail SMTP OTP password recovery, Telegram order alerts, and an administrative control suite.
 </p>
 
 </div>
+
 
 ---
 
