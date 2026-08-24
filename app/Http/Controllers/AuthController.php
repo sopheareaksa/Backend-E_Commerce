@@ -47,24 +47,21 @@ class AuthController extends Controller
             'expires_at' => $expiresAt->timestamp,
         ], $expiresAt);
 
-        $mailSent = false;
         try {
             Mail::to($user->user_email)->send(new PasswordResetOtpMail($otp));
-            $mailSent = true;
         } catch (\Throwable $e) {
-            Log::warning('OTP email dispatch fallback', [
+            Log::error('Gmail SMTP dispatch failed', [
                 'error' => $e->getMessage(),
                 'email' => $email,
-                'otp' => $otp,
             ]);
+            return response()->json([
+                'message' => 'Unable to send email. Please verify your email address and try again.',
+            ], 500);
         }
 
         return response()->json([
             'success' => true,
-            'message' => $mailSent
-                ? 'A 6-digit verification code has been sent to your email.'
-                : 'Verification code generated. (Demo Code: ' . $otp . ')',
-            'demo_otp' => $mailSent ? null : $otp,
+            'message' => 'A 6-digit verification code has been sent to ' . $user->user_email . '. Please check your inbox.',
         ]);
     }
 
