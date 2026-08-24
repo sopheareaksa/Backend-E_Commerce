@@ -14,17 +14,18 @@ class CartController extends Controller
             ->with('product')
             ->get();
 
-        return $items->map(function ($item) {
+        return $items->filter(fn ($item) => $item->product !== null)->map(function ($item) {
             return [
                 'cart_item_id' => $item->id,
                 'product_id' => $item->product_id,
                 'product_name' => $item->product->product_name,
+                'product_category' => $item->product->product_category,
                 'product_price' => $item->product->product_price,
                 'product_discount' => $item->product->product_discount,
                 'product_image' => $item->product->product_image,
                 'quantity' => $item->quantity,
             ];
-        });
+        })->values();
     }
 
     public function store(Request $request)
@@ -51,21 +52,27 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $item = CartItem::where('id', $id)
-            ->where('user_id', $request->user()->user_id)
-            ->firstOrFail();
+        $item = CartItem::where('user_id', $request->user()->user_id)
+            ->where(function ($q) use ($id) {
+                $q->where('id', $id)->orWhere('product_id', $id);
+            })
+            ->first();
 
-        $item->update(['quantity' => $data['quantity']]);
-        return response()->json($item);
+        if ($item) {
+            $item->update(['quantity' => $data['quantity']]);
+        }
+
+        return response()->json(['message' => 'Cart item updated.']);
     }
 
     public function destroy(Request $request, $id)
     {
-        $item = CartItem::where('id', $id)
-            ->where('user_id', $request->user()->user_id)
-            ->firstOrFail();
+        CartItem::where('user_id', $request->user()->user_id)
+            ->where(function ($q) use ($id) {
+                $q->where('id', $id)->orWhere('product_id', $id);
+            })
+            ->delete();
 
-        $item->delete();
         return response()->json(['message' => 'Removed from cart.']);
     }
 
