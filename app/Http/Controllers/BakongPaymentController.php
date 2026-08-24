@@ -47,8 +47,8 @@ class BakongPaymentController extends Controller
             $bakongAccountId = config('services.bakong.account_id') ?: 'sopheareaksa_pheak@bkrt';
             $merchantId = config('services.bakong.merchant_id') ?: $bakongAccountId;
             $acquiringBank = config('services.bakong.acquiring_bank') ?: 'Bakong';
-            $accountType = config('services.bakong.account_type') ?: 'merchant';
-            $merchantName = config('services.bakong.merchant_name') ?: 'test';
+            $accountType = config('services.bakong.account_type') ?: 'individual';
+            $merchantName = config('services.bakong.merchant_name') ?: 'Sopheareaksa Pheak';
             $merchantCity = config('services.bakong.merchant_city') ?: 'Phnom Penh';
 
             $isKhr = strcasecmp((string) $currency, 'KHR') === 0;
