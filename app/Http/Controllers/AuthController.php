@@ -33,9 +33,10 @@ class AuthController extends Controller
         RateLimiter::hit($rateLimitKey, 600);
         $user = User::where('user_email', $email)->first();
 
-        // This response is intentionally identical whether the email exists or not.
         if (!$user) {
-            return response()->json(['message' => 'If that email is registered, a verification code has been sent.']);
+            return response()->json([
+                'message' => 'No account found with this email address. Please check your spelling or create a new account.',
+            ], 404);
         }
 
         $otp = (string) random_int(100000, 999999);

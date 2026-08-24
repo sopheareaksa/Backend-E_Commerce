@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         $orderCost = 0;
         foreach ($cartItems as $item) {
-            $price = $item->product->product_discount > 0
+            $price = ($item->product->product_discount > 0 && $item->product->product_discount < $item->product->product_price)
                 ? $item->product->product_discount
                 : $item->product->product_price;
             $orderCost += $price * $item->quantity;
@@ -46,12 +46,16 @@ class OrderController extends Controller
             ]);
 
             foreach ($cartItems as $item) {
+                $price = ($item->product->product_discount > 0 && $item->product->product_discount < $item->product->product_price)
+                    ? $item->product->product_discount
+                    : $item->product->product_price;
+
                 OrderItem::create([
                     'order_id' => $order->order_id,
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->product_name,
                     'product_image' => $item->product->product_image,
-                    'product_price' => $item->product->product_price,
+                    'product_price' => $price,
                     'product_quantity' => $item->quantity,
                     'user_id' => $user->user_id,
                     'order_date' => now(),
