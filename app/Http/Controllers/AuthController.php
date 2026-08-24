@@ -25,13 +25,13 @@ class AuthController extends Controller
         $email = strtolower(trim($data['email']));
         $rateLimitKey = 'password-reset-send:' . $request->ip() . ':' . hash('sha256', $email);
 
-        if (RateLimiter::tooManyAttempts($rateLimitKey, 10)) {
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 15)) {
             return response()->json([
                 'message' => 'Too many requests. Please try again in a few minutes.',
             ], 429);
         }
 
-        RateLimiter::hit($rateLimitKey, 120);
+        RateLimiter::hit($rateLimitKey, 60);
         $user = User::whereRaw('LOWER(user_email) = ?', [$email])->first();
 
         if (!$user) {
@@ -44,8 +44,7 @@ class AuthController extends Controller
         $expiresAt = now()->addMinutes(15);
         Cache::put($this->passwordResetCacheKey($email), [
             'otp_hash' => Hash::make($otp),
-            'attempts' => 0,
-            'expires_at' => $expiresAt,
+            'expires_at' => $expiresAt->timestamp,
         ], $expiresAt);
 
         $mailSent = false;
@@ -53,7 +52,7 @@ class AuthController extends Controller
             Mail::to($user->user_email)->send(new PasswordResetOtpMail($otp));
             $mailSent = true;
         } catch (\Throwable $e) {
-            Log::warning('OTP email dispatch error, using fallback', [
+            Log::warning('OTP email dispatch fallback', [
                 'error' => $e->getMessage(),
                 'email' => $email,
                 'otp' => $otp,
@@ -71,49 +70,55 @@ class AuthController extends Controller
 
     public function verifyOtp(Request $request)
     {
-        $data = $request->validate([
-            'email' => 'required|email',
-            'otp' => ['required', 'digits:6'],
-        ]);
-        $email = strtolower(trim($data['email']));
-        $key = $this->passwordResetCacheKey($email);
-        $reset = Cache::get($key);
+        try {
+            $data = $request->validate([
+                'email' => 'required|email',
+                'otp' => 'required',
+            ]);
+            $email = strtolower(trim($data['email']));
+            $otp = trim((string) $data['otp']);
+            $key = $this->passwordResetCacheKey($email);
+            $reset = Cache::get($key);
 
-        if (!$reset || ($reset['attempts'] ?? 0) >= 5 || !Hash::check($data['otp'], $reset['otp_hash'])) {
-            if ($reset) {
-                $reset['attempts'] = ($reset['attempts'] ?? 0) + 1;
-                Cache::put($key, $reset, $reset['expires_at']);
+            if (!$reset || !Hash::check($otp, $reset['otp_hash'])) {
+                return response()->json(['message' => 'The verification code is invalid or has expired.'], 422);
             }
+
+            return response()->json(['success' => true, 'message' => 'Verification code confirmed.']);
+        } catch (\Throwable $e) {
             return response()->json(['message' => 'The verification code is invalid or has expired.'], 422);
         }
-
-        return response()->json(['message' => 'Verification code confirmed.']);
     }
 
     public function resetPasswordWithOtp(Request $request)
     {
-        $data = $request->validate([
-            'email' => 'required|email',
-            'otp' => ['required', 'digits:6'],
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-        $email = strtolower(trim($data['email']));
-        $key = $this->passwordResetCacheKey($email);
-        $reset = Cache::get($key);
+        try {
+            $data = $request->validate([
+                'email' => 'required|email',
+                'otp' => 'required',
+                'password' => 'required|string|min:6|confirmed',
+            ]);
+            $email = strtolower(trim($data['email']));
+            $otp = trim((string) $data['otp']);
+            $key = $this->passwordResetCacheKey($email);
+            $reset = Cache::get($key);
 
-        if (!$reset || ($reset['attempts'] ?? 0) >= 5 || !Hash::check($data['otp'], $reset['otp_hash'])) {
-            return response()->json(['message' => 'The verification code is invalid or has expired.'], 422);
+            if (!$reset || !Hash::check($otp, $reset['otp_hash'])) {
+                return response()->json(['message' => 'The verification code is invalid or has expired.'], 422);
+            }
+
+            $user = User::whereRaw('LOWER(user_email) = ?', [$email])->first();
+            if (!$user) {
+                return response()->json(['message' => 'Unable to reset this password.'], 422);
+            }
+
+            $user->update(['user_password' => Hash::make($data['password'])]);
+            Cache::forget($key);
+
+            return response()->json(['success' => true, 'message' => 'Password reset successfully. You can now sign in.']);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => $e->getMessage() ?: 'Unable to reset password.'], 422);
         }
-
-        $user = User::whereRaw('LOWER(user_email) = ?', [$email])->first();
-        if (!$user) {
-            return response()->json(['message' => 'Unable to reset this password.'], 422);
-        }
-
-        $user->update(['user_password' => Hash::make($data['password'])]);
-        Cache::forget($key);
-
-        return response()->json(['message' => 'Password reset successfully. You can now sign in.']);
     }
 
     public function register(Request $request)
