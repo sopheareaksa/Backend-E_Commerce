@@ -7,29 +7,35 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    private function cachedResponse($data)
+    {
+        return response()->json($data)
+            ->header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    }
+
     public function index()
     {
-        return Product::orderBy('product_id', 'desc')->get();
+        return $this->cachedResponse(Product::orderBy('product_id', 'desc')->get());
     }
 
     public function featured()
     {
-        return Product::where('product_category', 'featured')->orderBy('product_id', 'desc')->get();
+        return $this->cachedResponse(Product::where('product_category', 'featured')->orderBy('product_id', 'desc')->get());
     }
 
     public function byCategory($slug)
     {
-        return Product::where('product_category', $slug)->orderBy('product_id', 'desc')->get();
+        return $this->cachedResponse(Product::where('product_category', $slug)->orderBy('product_id', 'desc')->get());
     }
 
     public function search(Request $request)
     {
         $q = $request->input('q');
-        return Product::where('product_name', 'like', "%{$q}%")->orderBy('product_id', 'desc')->get();
+        return $this->cachedResponse(Product::where('product_name', 'like', "%{$q}%")->orderBy('product_id', 'desc')->get());
     }
 
     public function show($id)
     {
-        return Product::findOrFail($id);
+        return $this->cachedResponse(Product::findOrFail($id));
     }
 }

@@ -5,7 +5,7 @@ set -e
 PORT="${PORT:-80}"
 sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
 
-# Clear old cached config and re-cache with live environment variables
+# Clear and optimize Laravel caches
 php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
@@ -16,10 +16,10 @@ if [ -n "$APP_KEY" ]; then
     php artisan view:cache || true
 fi
 
-# Automatically run migrations & seed products on startup if cloud DB is provided
+# Run migrations if cloud DB is configured (fast, skips if already migrated)
 if [ -n "$DB_HOST" ] && [ "$DB_HOST" != "127.0.0.1" ] && [ "$DB_HOST" != "localhost" ]; then
-    echo "Running migrations and seeding default products..."
-    php artisan migrate --seed --force || true
+    echo "Running migrations..."
+    php artisan migrate --force || true
 fi
 
 exec "$@"
