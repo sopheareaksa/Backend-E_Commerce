@@ -41,13 +41,13 @@ services:
       - key: MAIL_HOST
         value: smtp.gmail.com
       - key: MAIL_PORT
-        value: "465"
+        value: "587"
       - key: MAIL_USERNAME
         value: "Sopheareaksapheak@gmail.com"
       - key: MAIL_PASSWORD
         value: "azhteistzzyqiyrz"
       - key: MAIL_ENCRYPTION
-        value: ssl
+        value: tls
       - key: MAIL_FROM_ADDRESS
         value: "Sopheareaksapheak@gmail.com"
       - key: MAIL_FROM_NAME
