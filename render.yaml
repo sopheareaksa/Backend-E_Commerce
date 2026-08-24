@@ -64,7 +64,7 @@ services:
       - key: BAKONG_API_URL
         value: "https://api-bakong.nbc.gov.kh"
       - key: BAKONG_API_TOKEN
-        sync: false
+        value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiYWM1YTBhMTczYjA5NDUxNyJ9LCJpYXQiOjE3ODcyMTMwNDEsImV4cCI6MTc5NDk4OTA0MX0.jgqpOE7oIQ52gim8NjX9NyKHHwG2Ff7wtzN5nNdgF24"
       # Telegram Bot
       - key: TELEGRAM_BOT_TOKEN
         sync: false

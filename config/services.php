@@ -46,7 +46,7 @@ return [
         'merchant_name' => env('BAKONG_MERCHANT_NAME', 'test'),
         'merchant_city' => env('BAKONG_MERCHANT_CITY', 'Phnom Penh'),
         'api_url' => env('BAKONG_API_URL', 'https://api-bakong.nbc.gov.kh'),
-        'api_token' => env('BAKONG_API_TOKEN', ''),
+        'api_token' => env('BAKONG_API_TOKEN', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiYWM1YTBhMTczYjA5NDUxNyJ9LCJpYXQiOjE3ODcyMTMwNDEsImV4cCI6MTc5NDk4OTA0MX0.jgqpOE7oIQ52gim8NjX9NyKHHwG2Ff7wtzN5nNdgF24'),
     ],
 
     'slack' => [
