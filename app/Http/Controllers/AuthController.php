@@ -46,7 +46,19 @@ class AuthController extends Controller
             'expires_at' => $expiresAt,
         ], $expiresAt);
 
-        Mail::to($user->user_email)->send(new PasswordResetOtpMail($otp));
+        try {
+            Mail::to($user->user_email)->send(new PasswordResetOtpMail($otp));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('OTP mail failed', [
+                'error' => $e->getMessage(),
+                'mailer' => config('mail.default'),
+                'host' => config('mail.mailers.smtp.host'),
+            ]);
+            return response()->json([
+                'message' => 'Unable to send email. Please try again later.',
+                'debug' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
+        }
 
         return response()->json(['message' => 'If that email is registered, a verification code has been sent.']);
     }

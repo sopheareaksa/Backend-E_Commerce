@@ -17,6 +17,8 @@ services:
         value: file
       - key: CACHE_STORE
         value: file
+      - key: QUEUE_CONNECTION
+        value: sync
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
@@ -33,6 +35,24 @@ services:
         sync: false
       - key: SANCTUM_STATEFUL_DOMAINS
         sync: false
+      # Gmail SMTP for OTP password reset emails
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_ENCRYPTION
+        value: tls
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: MAIL_FROM_NAME
+        value: "Zodiac Store"
+      # Bakong KHQR
       - key: BAKONG_ACCOUNT_ID
         value: "sopheareaksa_pheak@bkrt"
       - key: BAKONG_ACCOUNT_TYPE
@@ -44,4 +64,9 @@ services:
       - key: BAKONG_API_URL
         value: "https://api-bakong.nbc.gov.kh"
       - key: BAKONG_API_TOKEN
+        sync: false
+      # Telegram Bot
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
         sync: false
