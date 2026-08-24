@@ -43,13 +43,13 @@ services:
       - key: MAIL_PORT
         value: "587"
       - key: MAIL_USERNAME
-        sync: false
+        value: "Sopheareaksapheak@gmail.com"
       - key: MAIL_PASSWORD
-        sync: false
+        value: "azht eist zzyq iyrz"
       - key: MAIL_ENCRYPTION
         value: tls
       - key: MAIL_FROM_ADDRESS
-        sync: false
+        value: "Sopheareaksapheak@gmail.com"
       - key: MAIL_FROM_NAME
         value: "Zodiac Store"
       # Bakong KHQR
