@@ -16,12 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
-        $middleware->api(append: [
+        $middleware->use([
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
         $middleware->validateCsrfTokens(except: [
-            'api/*',
-            'payments/*',
+            '*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
